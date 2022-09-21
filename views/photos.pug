@@ -1,0 +1,28 @@
+doctype html
+html(lang="en")
+    include includes/head.pug
+    body
+        h1 Products
+        a(href="/products/add") Add product
+        table(border="1")
+            thead 
+                tr 
+                    th ID
+                    th Title
+                    th Caption
+                    th Image
+                    th User
+                    th Action
+            tbody
+                each photo in photos
+                    tr 
+                        td #{photo.id}
+                        td #{photo.title}
+                        td #{photo.caption}
+                        td 
+                            img(src=photo.image_url)
+                        td #{photo.User.email}
+                        td 
+                            a(href=`/photos/${photo.id}`) See more 
+                            a(href=`/photos/edit/${photo.id}`) Edit 
+                            a(href=`/photos/delete/${photo.id}`) Delete
