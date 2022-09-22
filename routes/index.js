@@ -6,5 +6,6 @@ router.get('/photos', PhotoController.findAll);
 router.get('/photos/:id', PhotoController.findById);
 router.post('/photos', PhotoController.create);
 router.delete('/photos/:id', PhotoController.deletePhoto);
+router.put('/photos/:id', PhotoController.updatePhoto);
 
 module.exports = router;

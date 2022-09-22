@@ -86,7 +86,7 @@ class PhotoController{
             if (!photos) {
                 throw {name: 'ErrorNotFound'}
             }else {
-                res.status(202).json({ message:"Photo has been successfully deleted"})
+                res.status(202).json({ message:`Photo ${req.params.id} has been successfully deleted`})
             }
         })
         .catch((error) => {
@@ -96,6 +96,10 @@ class PhotoController{
                 res.status(500).json({ message: "internal server error" })
             }
         })
+    }
+
+    static updatePhoto(req, res){
+        
     }
 }
 
