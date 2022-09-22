@@ -9,21 +9,24 @@ module.exports = {
       caption: 'deskripsi poto1',
       image_url: 'http://photos.com/photos1',
       createdAt: timeNow,
-      updatedAt: timeNow
+      updatedAt: timeNow,
+      UserId: 1
     },
     {
       title: 'photo 2',
       caption: 'deskripsi poto 2',
       image_url: 'http://photos.com/photos1',
       createdAt: timeNow,
-      updatedAt: timeNow
+      updatedAt: timeNow,
+      UserId: 1
     },
     {
       title: 'photo 3',
       caption: 'deskripsi poto 3',
       image_url: 'http://photos.com/photos3',
       createdAt: timeNow,
-      updatedAt: timeNow
+      updatedAt: timeNow,
+      UserId: 2
     }
    ])
   },

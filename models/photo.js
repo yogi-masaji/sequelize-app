@@ -15,11 +15,52 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Photo.init({
-    title: DataTypes.STRING,
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Title cannot be empty"
+        },
+        notEmpty:{
+          msg: "Title cannot contain empty characters"
+        }, 
+      }
+    }, 
     caption: DataTypes.STRING,
-    image_url: DataTypes.TEXT,
-    UserId: DataTypes.INTEGER
+    image_url: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Image URL cannot be empty"
+        },
+        notEmpty:{
+          msg: "Image URL cannot contain empty characters"
+        }, 
+        isUrl:{
+          msg: "Wrong URL format"
+        }
+      }
+    }, 
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "user ID cannot be empty"
+        },
+        notEmpty:{
+          msg: "User ID cannot contain empty characters"
+        }
+      }
+    }, 
   }, {
+    hooks: {
+      beforeCreate(instance){
+        instance.caption = `${instance.title.toUpperCase()} ${instance.image_url}`;
+      }
+    },
     sequelize,
     modelName: 'Photo',
   });

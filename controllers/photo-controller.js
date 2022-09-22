@@ -14,34 +14,65 @@ class PhotoController{
         })
     }
 
-    static findById(req, res){
+    // static findById(req, res){
+    //     const {id} = req.params;
+    //     Photo.findByPk(id, {include : [User]})
+    //     .then((photos) => {
+    //         if (!photos) {
+    //             throw {name: 'ErrorNotFound'}
+    //         }else {
+    //             res.status(200).json(photos)
+    //         }
+    //     })
+    //     .catch((error) => {
+    //         if (error.name === 'ErrorNotFound') {
+    //             res.status(404).json({ message: "Photo not found" })
+    //         }else{
+    //             res.status(500).json({ message: "internal server error" })
+    //         }
+    //     })
+    // }
+
+
+    // Paka Async
+    static async findById(req, res){
         const {id} = req.params;
-        Photo.findByPk(id, {include : [User]})
-        .then((photos) => {
-            if (!photos) {
-                throw {name: 'ErrorNotFound'}
-            }else {
-                res.status(200).json(photos)
-            }
-        })
-        .catch((error) => {
+        try {
+            const photos = await Photo.findByPk(id, {include : [User]})
+            if (!photos) throw {name: 'ErrorNotFound'}
+            res.status(200).json(photos)
+        } catch (error) {
             if (error.name === 'ErrorNotFound') {
                 res.status(404).json({ message: "Photo not found" })
             }else{
                 res.status(500).json({ message: "internal server error" })
             }
-        })
+        }
+        
     }
 
+
     static create(req, res){
-        const {title, caption, image_url, UserId} = req.body;
+        const {title, image_url, UserId} = req.body;
         console.log(req.body);
-        Photo.create({title, caption, image_url, UserId})
+        // if (!title) {
+        //     res.status(400).json({ message: 'title cannot be empty' })
+        // }
+        Photo.create({title, image_url, UserId})
         .then((photos) => {
             res.status(201).json(photos)
         })
         .catch((error) => {
-            res.status(500).json({ message: "internal server error" })
+            if (error.name  === 'SequelizeValidationError') {
+                const errorValidation = error.errors.map((error)=>{
+                    return error.message;
+                })
+                return res.status(400).json({ message: errorValidation })
+            } else if (error.name  === 'SequelizeForeignKeyConstraintError'){
+                return res.status(400).json({ message: "user does not exist" })
+            } else {
+                res.status(500).json({ message: error })
+            }
         })
     }
 }
