@@ -18,19 +18,19 @@ class PhotoController{
     //     const {id} = req.params;
     //     Photo.findByPk(id, {include : [User]})
     //     .then((photos) => {
-    //         if (!photos) {
-    //             throw {name: 'ErrorNotFound'}
-    //         }else {
-    //             res.status(200).json(photos)
-    //         }
+            // if (!photos) {
+            //     throw {name: 'ErrorNotFound'}
+            // }else {
+            //     res.status(200).json(photos)
+            // }
     //     })
-    //     .catch((error) => {
-    //         if (error.name === 'ErrorNotFound') {
-    //             res.status(404).json({ message: "Photo not found" })
-    //         }else{
-    //             res.status(500).json({ message: "internal server error" })
-    //         }
-    //     })
+        // .catch((error) => {
+        //     if (error.name === 'ErrorNotFound') {
+        //         res.status(404).json({ message: "Photo not found" })
+        //     }else{
+        //         res.status(500).json({ message: "internal server error" })
+        //     }
+        // })
     // }
 
 
@@ -72,6 +72,28 @@ class PhotoController{
                 return res.status(400).json({ message: "user does not exist" })
             } else {
                 res.status(500).json({ message: error })
+            }
+        })
+    }
+
+    static deletePhoto(req, res){
+        Photo.destroy({
+            where: {
+                id: req.params.id
+            }
+        })
+        .then((photos) => {
+            if (!photos) {
+                throw {name: 'ErrorNotFound'}
+            }else {
+                res.status(202).json({ message:"Photo has been successfully deleted"})
+            }
+        })
+        .catch((error) => {
+            if (error.name === 'ErrorNotFound') {
+                res.status(404).json({ message: "Photo not found" })
+            }else{
+                res.status(500).json({ message: "internal server error" })
             }
         })
     }
