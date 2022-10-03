@@ -1,11 +1,9 @@
-const PhotoController = require('../controllers/photo-controller')
 
 const router = require('express').Router();
+const userRouter = require('./user-router');
+const photosRouter = require('./photos-router');
 
-router.get('/photos', PhotoController.findAll);
-router.get('/photos/:id', PhotoController.findById);
-router.post('/photos', PhotoController.create);
-router.delete('/photos/:id', PhotoController.deletePhoto);
-router.put('/photos/:id', PhotoController.updatePhoto);
+router.use(userRouter)
+router.use('/photos', photosRouter)
 
 module.exports = router;
