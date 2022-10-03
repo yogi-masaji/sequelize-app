@@ -1,7 +1,20 @@
 const {User} = require('../models/index');
+const {compare} = require('../helpers/hash')
 class UsersController {
-    static signIn(req, res){
-        res.status(200).json({message: 'sign in'})
+    static async signIn(req, res){
+        const {email, password} = req.body;
+        try {
+            const user = await User.findOne({where : {email}});
+            if (!user) throw {name: 'EmailNotFound'};
+            if (!compare(password, user.password)) throw {name: 'WrongPassword'};
+            res.status(200).json(user)
+        } catch (error){
+            if (error.name === 'EmailNotFound' || error.name === 'WrongPassword'){
+                res.status(401).json({message: 'Wrong email or password'});
+            } else{
+                res.status(500).json({message: "internal server error"});
+            }
+        }
     }
     
     static async signUp(req, res){
