@@ -2,15 +2,16 @@ const {Photo, User} = require('./../models/index')
 const http = require('http')
 
 class PhotoController{
-    static findAll(req, res) {
+    static findAll(req, res, next) {
         // Photo.findAll({include : [User]})
-        Photo.findAll()
+        console.log("findAll", req.user)
+        Photo.findAll({where : {UserId : req.user.id}})
         .then((photos) => {
             // res.render('photos', { photos })
             res.status(200).json(photos)
         })
         .catch((error) => {
-            res.status(500).json({ message: "internal server error" })
+            next(error);
         })
     }
 
@@ -35,24 +36,20 @@ class PhotoController{
 
 
     // Paka Async
-    static async findById(req, res){
+    static async findById(req, res, next){
         const {id} = req.params;
         try {
             const photos = await Photo.findByPk(id, {include : [User]})
             if (!photos) throw {name: 'ErrorNotFound'}
             res.status(200).json(photos)
         } catch (error) {
-            if (error.name === 'ErrorNotFound') {
-                res.status(404).json({ message: "Photo not found" })
-            }else{
-                res.status(500).json({ message: "internal server error" })
-            }
+            next(error);
         }
         
     }
 
 
-    static create(req, res){
+    static create(req, res, next){
         const {title, image_url, UserId} = req.body;
         console.log(req.body);
         // if (!title) {
@@ -63,20 +60,11 @@ class PhotoController{
             res.status(201).json(photos)
         })
         .catch((error) => {
-            if (error.name  === 'SequelizeValidationError') {
-                const errorValidation = error.errors.map((error)=>{
-                    return error.message;
-                })
-                return res.status(400).json({ message: errorValidation })
-            } else if (error.name  === 'SequelizeForeignKeyConstraintError'){
-                return res.status(400).json({ message: "user does not exist" })
-            } else {
-                res.status(500).json({ message: error })
-            }
+            next(error);
         })
     }
 
-    static deletePhoto(req, res){
+    static deletePhoto(req, res, next){
         Photo.destroy({
             where: {
                 id: req.params.id

@@ -1,23 +1,24 @@
 const {User} = require('../models/index');
-const {compare} = require('../helpers/hash')
+const {compare} = require('../helpers/hash');
+const {sign} = require('../helpers/jwt');
+
 class UsersController {
-    static async signIn(req, res){
+    static async signIn(req, res, next){
         const {email, password} = req.body;
         try {
             const user = await User.findOne({where : {email}});
             if (!user) throw {name: 'EmailNotFound'};
             if (!compare(password, user.password)) throw {name: 'WrongPassword'};
-            res.status(200).json(user)
+            // encode and sign jwt
+            const token = sign({id: user.id, email: user.email})
+
+            res.status(200).json({token})
         } catch (error){
-            if (error.name === 'EmailNotFound' || error.name === 'WrongPassword'){
-                res.status(401).json({message: 'Wrong email or password'});
-            } else{
-                res.status(500).json({message: "internal server error"});
-            }
+            next(error);
         }
     }
     
-    static async signUp(req, res){
+    static async signUp(req, res, next){
         const { username, email, password } = req.body;
         try {
             const user = await User.create({ username, email, password });
@@ -26,11 +27,7 @@ class UsersController {
                 email: user.email
             })
         } catch (error) {
-            if (error.name === 'SequelizeUniqueConstraintError'){
-                res.status(400).json({ message: "bad request" })
-            } else {
-                res.status(500).json({message: "internal server error"})
-            }
+            next(error);
         }
     }
 }
